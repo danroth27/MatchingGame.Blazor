@@ -20,8 +20,8 @@
                 @for (int col = 0; col < game.Width; col++)
                 {
                     var text = game.GetCard(col, row);
-                    var isOpen = game.IsOpen(col, row);
-                    <Card Row="row" Column="col" IsOpen="isOpen" OnSelected="OnCardSelected">
+                    var cardState = game.GetCardState(col, row);
+                    <Card Row="row" Column="col" CardState="cardState" OnSelected="OnCardSelected">
                         <span class="text-center card-text"><strong>@text</strong></span>
                     </Card>
                 }
@@ -29,5 +29,5 @@
         }
     </div>
 
-    <button class="btn btn-primary" onclick="@StartNewGame">New game</button>
+    <button class="btn btn-primary" onclick="@ResetGame">New game</button>
 </div>

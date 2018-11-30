@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MatchingGame.Logic
 {
     public sealed class Game
     {
+        [Flags]
+        public enum CardState { Closed = 0, Open = 1, Matched = 2 };
+
         private readonly char[] _cards;
-        private readonly bool[] _openCards;
+        private readonly CardState[] _cardStates;
         private readonly List<int> _turnCards = new List<int>(2);
         private int _turns;
 
@@ -15,7 +19,7 @@ namespace MatchingGame.Logic
             Width = width;
             Height = height;
             _cards = board;
-            _openCards = new bool[_cards.Length];
+            _cardStates = new CardState[_cards.Length];
         }
 
         public static Game Create()
@@ -44,6 +48,12 @@ namespace MatchingGame.Logic
             return new Game(width, height, board);
         }
 
+        public void CloseAllCards()
+        {
+            for (var i = 0; i < _cardStates.Length; i++)
+                _cardStates[i] = CardState.Closed;
+        }
+
         public int Turns => _turns;
 
         public int Width { get; }
@@ -65,18 +75,12 @@ namespace MatchingGame.Logic
             var cardIndex = GetIndex(w, h);
             var cardValue = _cards[cardIndex];
             _turnCards.Add(cardIndex);
-            _openCards[cardIndex] = true;
+            _cardStates[cardIndex] = CardState.Open;
 
             if (_turnCards.Count == 2)
                 _turns++;
 
             return cardValue;
-        }
-
-        public void CloseCards()
-        {
-            foreach (var cardIndex in _turnCards)
-                _openCards[cardIndex] = false;
         }
 
         public char GetCard(int w, int h)
@@ -85,10 +89,10 @@ namespace MatchingGame.Logic
             return _cards[cardIndex];
         }
 
-        public bool IsOpen(int w, int h)
+        public CardState GetCardState(int w, int h)
         {
             var v = GetIndex(w, h);
-            return _openCards[v];
+            return _cardStates[v];
         }
 
         public bool IsMatch()
@@ -101,23 +105,23 @@ namespace MatchingGame.Logic
             return _cards[firstCardIndex] == _cards[secondCardIndex];
         }
 
-        public bool CompleteTurn()
+        public void CompleteTurn()
         {
             var isMatch = IsMatch();
-            if (!isMatch)
-                CloseCards();
+            foreach (var cardIndex in _turnCards)
+            {
+                if (isMatch)
+                    _cardStates[cardIndex] |= CardState.Matched;
+                else
+                    _cardStates[cardIndex] = CardState.Closed;
+            }
 
             _turnCards.Clear();
-            return isMatch;
         }
 
         public bool IsComplete()
         {
-            foreach (var isVisible in _openCards)
-                if (!isVisible)
-                    return false;
-
-            return true;
+            return _cardStates.All(s => s.HasFlag(CardState.Matched));
         }
     }
 }

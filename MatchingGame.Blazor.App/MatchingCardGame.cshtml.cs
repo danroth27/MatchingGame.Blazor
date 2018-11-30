@@ -23,9 +23,16 @@ namespace MatchingGame.Blazor
             message = null;
         }
 
+        protected async Task ResetGame()
+        {
+            game.CloseAllCards();
+            await Task.Delay(350);
+            StartNewGame();
+        }
+
         protected async Task OnCardSelected(Card card)
         {
-            if (isBusy || game.IsOpen(card.Column, card.Row))
+            if (isBusy || game.GetCardState(card.Column, card.Row) != Game.CardState.Closed)
             {
                 return;
             }
@@ -35,8 +42,6 @@ namespace MatchingGame.Blazor
 
             if (game.RemainingCardsInTurn == 0)
             {
-                CheckForWinner();
-
                 if (!game.IsMatch())
                 {
                     isBusy = true;
@@ -45,6 +50,7 @@ namespace MatchingGame.Blazor
                 }
 
                 game.CompleteTurn();
+                CheckForWinner();
                 StateHasChanged();
             }
         }
