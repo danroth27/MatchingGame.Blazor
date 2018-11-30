@@ -33,5 +33,8 @@ app {
     align-items: center;
     border-style: solid;
     border-color: white;
-    background-color: lightblue
+    background-color: lightblue;
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
