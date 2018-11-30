@@ -1,8 +1,5 @@
-﻿<div class="game-card" onclick="@OnClick">
-    @if (IsOpen)
-    {
-        @ChildContent
-    }
+﻿<div class="game-card @(IsOpen ? "game-card-open" : "")" onclick="@OnClick">
+    @ChildContent
 </div>
 
 @functions {
