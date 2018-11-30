@@ -72,3 +72,19 @@ app {
     transform: rotateY(180deg);
     background-color: #4059c7;
 }
+
+.game-card.game-card-matched .card-text {
+    animation: matched-card 1000ms forwards;
+    animation-delay: 350ms;
+    animation-iteration-count: 1;
+}
+
+@-webkit-keyframes matched-card {
+    0% {
+        background-color: Yellow;
+    }
+
+    100% {
+        background-color: #42e087;
+    }
+}

@@ -1,4 +1,4 @@
-﻿<div class="game-card @(IsOpen ? "game-card-open" : "")" onclick="@OnClick">
+﻿<div class="@CssClass()" onclick="@OnClick">
     @ChildContent
 </div>
 
@@ -6,9 +6,20 @@
     [Parameter] public int Row { get; private set; }
     [Parameter] public int Column { get; private set; }
     [Parameter] protected RenderFragment ChildContent { get; set; }
-    [Parameter] protected bool IsOpen { get; set; }
+    [Parameter] protected Game.CardState CardState { get; set; }
+    [Parameter] protected bool IsMatched { get; set; }
 
     [Parameter] protected Func<Card, Task> OnSelected { get; set; }
+
+    string CssClass()
+    {
+        var cssClass = "game-card";
+        if (CardState.HasFlag(Game.CardState.Open))
+            cssClass += " game-card-open";
+        if (CardState.HasFlag(Game.CardState.Matched))
+            cssClass += " game-card-matched";
+        return cssClass;
+    }
 
     Task OnClick()
     {
