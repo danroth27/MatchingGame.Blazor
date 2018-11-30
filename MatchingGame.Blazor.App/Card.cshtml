@@ -11,11 +11,11 @@
     [Parameter] protected RenderFragment ChildContent { get; set; }
     [Parameter] protected bool IsOpen { get; set; }
 
-    [Parameter] protected Action<Card> OnSelected { get; set; }
+    [Parameter] protected Func<Card, Task> OnSelected { get; set; }
 
-    void OnClick()
+    Task OnClick()
     {
         Console.WriteLine("OnClick");
-        OnSelected((Card)(object)this);
+        return OnSelected((Card)(object)this);
     }
 }

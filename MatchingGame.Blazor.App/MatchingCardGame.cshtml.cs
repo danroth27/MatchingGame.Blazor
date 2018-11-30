@@ -1,9 +1,6 @@
 ﻿using MatchingGame.Blazor.App;
 using MatchingGame.Logic;
 using Microsoft.AspNetCore.Blazor.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MatchingGame.Blazor
@@ -13,7 +10,7 @@ namespace MatchingGame.Blazor
         protected Game game;
         protected int bestScore;
         protected string message;
-        Task delay;
+        bool isBusy;
 
         protected override void OnInit()
         {
@@ -26,33 +23,30 @@ namespace MatchingGame.Blazor
             message = null;
         }
 
-        protected void OnCardSelected(Card card)
+        protected async Task OnCardSelected(Card card)
         {
-            if (delay != null && !delay.IsCompleted)
+            if (isBusy || game.IsOpen(card.Column, card.Row))
+            {
                 return;
-
-            if (game.IsOpen(card.Column, card.Row))
-                return;
+            }
 
             game.OpenCard(card.Column, card.Row);
             StateHasChanged();
 
-            if (game.RemainingCardsInTurn > 0)
-                return;
-
-            CheckForWinner();
-
-            if (game.IsMatch())
+            if (game.RemainingCardsInTurn == 0)
             {
-                game.CompleteTurn();
-                return;
-            }
+                CheckForWinner();
 
-            delay = Task.Delay(750).ContinueWith(_ =>
-            {
+                if (!game.IsMatch())
+                {
+                    isBusy = true;
+                    await Task.Delay(750);
+                    isBusy = false;
+                }
+
                 game.CompleteTurn();
                 StateHasChanged();
-            });
+            }
         }
 
         private void CheckForWinner()
