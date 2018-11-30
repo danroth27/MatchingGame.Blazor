@@ -1,0 +1,33 @@
+﻿@inherits MatchingCardGameBase
+
+<div class="container">
+    <h1>Matching Card Game</h1>
+
+    @if (bestScore > 0)
+    {
+        <h2>Best Score: @bestScore</h2>
+    }
+
+    @if (message != null)
+    {
+        <p class="alert alert-success">@message</p>
+    }
+
+    <div class="game-board">
+        @for (int row = 0; row < game.Height; row++)
+        {
+            <div class="game-board-row">
+                @for (int col = 0; col < game.Width; col++)
+                {
+                    var text = game.GetCard(col, row);
+                    var isOpen = game.IsOpen(col, row);
+                    <Card Row="row" Column="col" IsOpen="isOpen" OnSelected="OnCardSelected">
+                        <span class="text-center card-text"><strong>@text</strong></span>
+                    </Card>
+                }
+            </div>
+        }
+    </div>
+
+    <button class="btn btn-primary" onclick="@StartNewGame">New game</button>
+</div>
