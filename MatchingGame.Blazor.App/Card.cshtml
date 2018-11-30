@@ -1,0 +1,21 @@
+﻿<div class="game-card" onclick="@OnClick">
+    @if (IsOpen)
+    {
+        @ChildContent
+    }
+</div>
+
+@functions {
+    [Parameter] public int Row { get; private set; }
+    [Parameter] public int Column { get; private set; }
+    [Parameter] protected RenderFragment ChildContent { get; set; }
+    [Parameter] protected bool IsOpen { get; set; }
+
+    [Parameter] protected Action<Card> OnSelected { get; set; }
+
+    void OnClick()
+    {
+        Console.WriteLine("OnClick");
+        OnSelected((Card)(object)this);
+    }
+}
